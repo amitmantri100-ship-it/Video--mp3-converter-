@@ -36,6 +36,20 @@ button{
   cursor:pointer;
 }
 button:hover{opacity:.9}
+.progress-container{
+  width:100%;
+  background:#eee;
+  border-radius:5px;
+  margin-top:15px;
+  height:10px;
+  display:none;
+}
+.progress-bar{
+  width:0%;
+  height:100%;
+  background:#2c5364;
+  border-radius:5px;
+}
 small{display:block;margin-top:10px;color:#666}
 </style>
 </head>
@@ -47,20 +61,32 @@ small{display:block;margin-top:10px;color:#666}
     <input type="file" name="video" accept="video/*" required />
     <br/>
     <button>Convert to MP3</button>
-    <small id="msg"></small>
   </form>
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+  <small id="msg"></small>
 </div>
 
 <script>
 const f = document.getElementById('f');
 const msg = document.getElementById('msg');
+const progressContainer = document.querySelector('.progress-container');
+const progressBar = document.querySelector('.progress-bar');
 
 f.addEventListener('submit', async (e)=>{
   e.preventDefault();
+  progressContainer.style.display = 'block';
+  progressBar.style.width = '0%';
   msg.textContent = "Converting... please wait";
+
   const fd = new FormData(f);
 
-  const res = await fetch('/convert',{method:'POST',body:fd});
+  const res = await fetch('/convert',{
+    method:'POST',
+    body:fd
+  });
+
   const blob = await res.blob();
   const url = URL.createObjectURL(blob);
 
@@ -68,6 +94,8 @@ f.addEventListener('submit', async (e)=>{
   a.href = url;
   a.download = "converted.mp3";
   a.click();
+
+  progressBar.style.width = '100%';
   msg.textContent = "Done! Download started.";
 });
 </script>
