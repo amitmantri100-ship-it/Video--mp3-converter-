@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Video to MP3 Converter</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{
+  margin:0;
+  font-family:Poppins, sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.card{
+  background:#fff;
+  padding:30px;
+  border-radius:14px;
+  width:92%;
+  max-width:420px;
+  text-align:center;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+h1{margin:0 0 15px;}
+input{margin:15px 0;}
+button{
+  background:#2c5364;
+  color:#fff;
+  border:0;
+  padding:12px 22px;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+}
+button:hover{opacity:.9}
+small{display:block;margin-top:10px;color:#666}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Video → MP3</h1>
+  <form id="f">
+    <input type="file" name="video" accept="video/*" required />
+    <br/>
+    <button>Convert to MP3</button>
+    <small id="msg"></small>
+  </form>
+</div>
+
+<script>
+const f = document.getElementById('f');
+const msg = document.getElementById('msg');
+
+f.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  msg.textContent = "Converting... please wait";
+  const fd = new FormData(f);
+
+  const res = await fetch('/convert',{method:'POST',body:fd});
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = "converted.mp3";
+  a.click();
+  msg.textContent = "Done! Download started.";
+});
+</script>
+
+</body>
+</html>
